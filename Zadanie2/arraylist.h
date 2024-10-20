@@ -12,10 +12,10 @@ private:
     T* tab;
     size_t last;
     size_t msize;
-    unsigned long long int min_size;
+    unsigned long long int min_size = 4;
 
     void resizeUp(){
-        msize = (1.5 * msize);
+        msize = (2 * msize);
         T* new_data = new T[msize];
 
         for(size_t i =0; i < last; ++i){
@@ -51,7 +51,7 @@ private:
 
 public:
     ArrayList(){
-        msize = 2;
+        msize = min_size;
         last = 0;
 
         tab = new T[msize];
@@ -142,7 +142,7 @@ public:
 
 
     T get(size_t index) {
-        if (index >= last) {
+        if (index>= last) {
             throw out_of_range("Index out of range.");
         }
         return tab[index];
@@ -219,7 +219,6 @@ public:
 
 
     void clear(){
-        last = 4;
         resizeDown();
         last = 0;
     }
