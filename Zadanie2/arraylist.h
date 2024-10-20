@@ -2,9 +2,10 @@
 #define ALGOSY3_ARRAYLIST_H
 
 #include <iostream>
+#include <stdexcept>
 #include <algorithm>
-using namespace std;
 
+using namespace std;
 
 template<typename T>
 class ArrayList{
@@ -12,27 +13,20 @@ private:
     T* tab;
     size_t last;
     size_t msize;
-    unsigned long long int min_size = 4;
 
     void resizeUp(){
         msize = (2 * msize);
         T* new_data = new T[msize];
-
         for(size_t i =0; i < last; ++i){
             new_data[i] = tab[i];
         }
         delete[] tab;
         tab = new_data;
     }
-
     void resizeDown(){
-        if (last <= msize / 4 && msize > min_size) {
+        if (last <= msize / 4 && msize > 2) {
             msize /= 2;
-            if (msize < min_size) {
-                msize = min_size;
-            }
             T* new_data = new T[msize];
-
             for (size_t i = 0; i < last; ++i) {
                 new_data[i] = tab[i];
             }
@@ -40,45 +34,41 @@ private:
             tab = new_data;
         }
     }
-
-
     void check_size(){
         if(last <= msize / 2){
             resizeDown();
         }
     }
-
-
 public:
     ArrayList(){
-        msize = min_size;
+        msize = 2;
         last = 0;
-
         tab = new T[msize];
     }
-
     ArrayList& operator=(const ArrayList& other){
         if( this != &other){
             delete[] tab;
-
             msize = other.msize;
             last = other.last;
-
             tab = new T[msize];
-
-
             for(int i= 0; i< last; ++i){
                 tab[i] = other.tab[i];
             }
         }
         return *this;
     }
-
+    ArrayList(const ArrayList& other){
+        msize = other.msize;
+        last = other.last;
+        tab = new T[msize];
+        for (size_t i = 0; i < last; ++i) {
+            tab[i] = other.tab[i];
+        }
+    }
 
     ~ArrayList(){
         delete[] tab;
     }
-
     size_t get_size(){
         return last;
     }
@@ -87,19 +77,17 @@ public:
         return msize;
     }
 
+
     T& back(){
         if (empty()) {
             throw out_of_range("List is empty.");
         }
-
         return tab[last - 1];
     }
-
     T& front(){
         if (empty()) {
             throw out_of_range("List is empty.");
         }
-
         return tab[0];
     }
 
@@ -108,9 +96,7 @@ public:
         if (empty()) {
             throw out_of_range("List is empty.");
         }
-
         T front_elemnet = tab[0];
-
         for (size_t i = 1; i < last; ++i) {
             tab[i - 1] = tab[i];
         }
@@ -118,7 +104,6 @@ public:
         check_size();
         return front_elemnet;
     }
-
     // zmienilem, ze zwraca element
     T pop_back() {
         if (empty()) {
@@ -133,21 +118,19 @@ public:
     bool empty(){
         return last == 0;
     }
-    bool full() const { return last == msize; } // checks if the container is full
-
+    bool full() const { return last == msize; }
     int size(){
         return last;
     }
-    int max_size() const { return msize; } // najwieksza mozliwa liczba elementow
-
+    int max_size() const { return msize; }
 
     T get(size_t index) {
-        if (index>= last) {
+        if (index >= last) {
             throw out_of_range("Index out of range.");
         }
         return tab[index];
     }
-
+    // dodawanie elementu na koniec
     void push_back(const T& value){
         if (last == msize){
             resizeUp();
@@ -155,8 +138,7 @@ public:
         tab[last] = value;
         last++;
     }
-
-
+    // dodawanie elemntu una poczatek
     void push_front(const T& value) {
         if (last == msize) {
             resizeUp();
@@ -167,16 +149,13 @@ public:
         tab[0] = value;
         last++;
     }
-
     void removeLast(){
         if (empty()){
             throw out_of_range("empty list");
         }
         last--;
         check_size();
-
     }
-
     void erase(size_t index) {
         if (index >= last) {
             throw out_of_range("Index out of range");
@@ -187,23 +166,18 @@ public:
         last--;
         check_size();
     }
-
     void set(size_t index, T& value){
         if(index >= last){
             throw out_of_range("Index out of range.");
         }
         tab[index] = value;
-
     }
-
     void display() const {
-
         for (size_t i = 0; i < last; ++i) {
             cout << "->" << tab[i] << " ";
         }
         cout << endl;
     }
-
     void reverse(){
         size_t start = 0;
         size_t end = last-1;
@@ -211,38 +185,28 @@ public:
             T temp = tab[start];
             tab[start] = tab[end];
             tab[end] = temp;
-
             start++;
             end--;
         }
     }
-
-
     void clear(){
-        resizeDown();
         last = 0;
-    }
+        msize = 2;
+        T* new_data = new T[msize];
+        delete[] tab;
+        tab = new_data;
 
+    }
     void sort(int *pInt, int *pInt1) {
         if (last > 1) {
             sort(tab, tab + last);
         }
     }
-
-
-
     friend ostream& operator<<(ostream& os, const ArrayList& L) {
         for (int i = 0; i < L.last; ++i) {
             os << L.tab[i] << " ";
         }
         return os;
     }
-
 };
-
-
-
-
-
-
 #endif

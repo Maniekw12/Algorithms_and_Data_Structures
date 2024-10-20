@@ -95,14 +95,63 @@ void runTests() {
 
     cout << "Test 16: Check capacity after multiple insertions" << endl;
     assert(list.get_capacity() == 16);
+
 }
 
+void runTests2() {
+    ArrayList<int> list;
+
+    cout << "Test 17: Check initial capacity after creation" << endl;
+    assert(list.get_capacity() == 2);
+
+    cout << "Test 18: Fill list to check capacity increase" << endl;
+    for (int i = 1; i <= 5; ++i) {
+        list.push_back(i);
+    }
+    assert(list.get_capacity() >= 8);
+
+    cout << "Test 19: Remove elements and check capacity decrease" << endl;
+    assert(list.get_capacity() == 8);
+
+    list.pop_front();
+    list.pop_front();
+    list.pop_front();
+
+    assert(list.get_capacity() == 4);
 
 
+    cout << "Test 20: Clear the list and check capacity" << endl;
+    list.clear();
+    cout << list.get_capacity();
+
+    assert(list.get_capacity() == 2);
+
+    cout << "Test 21: Push back after clear" << endl;
+    for (int i = 0; i < 10; ++i) {
+        list.push_back(i);
+    }
+    assert(list.get_capacity() >= 16);
+
+    cout << "Test 22: Ensure no memory leak after many operations" << endl;
+    ArrayList<int> tempList;
+    for (int i = 0; i < 100; ++i) {
+        tempList.push_back(i);
+    }
+    assert(tempList.get_size() == 100);
+    tempList.clear();
+    cout << "Test 23: Ensure proper memory management with large inputs" << endl;
+    for (int i = 0; i < 1000; ++i) {
+        list.push_back(i);
+    }
+
+    assert(list.get_size() == 1010);
+    assert(list.get_capacity() >= 1024);
+
+}
 int main() {
     runTests();
-    cout << "Tests successfully passed" << endl;
+    runTests2();
+    cout << "All tests successfully passed" << endl;
     return 0;
 }
-
 
