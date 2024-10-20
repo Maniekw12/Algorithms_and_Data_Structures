@@ -51,7 +51,7 @@ void runTests() {
     list.display();
 
     for (int i = 1; i <= 10; ++i) {
-        list.push_back(i * 10); // List should resize as we add elements
+        list.push_back(i * 10);
     }
     cout << "Test 13: List after adding 10 elements: ";
     list.display();

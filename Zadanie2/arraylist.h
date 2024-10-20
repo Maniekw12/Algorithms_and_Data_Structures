@@ -2,7 +2,6 @@
 #define ALGOSY3_ARRAYLIST_H
 
 #include <iostream>
-#include <stdexcept>
 #include <algorithm>
 using namespace std;
 
@@ -27,8 +26,11 @@ private:
     }
 
     void resizeDown(){
-        if (last <= msize / 4 && msize > 2) {
+        if (last <= msize / 4 && msize > min_size) {
             msize /= 2;
+            if (msize < min_size) {
+                msize = min_size;
+            }
             T* new_data = new T[msize];
 
             for (size_t i = 0; i < last; ++i) {
@@ -37,8 +39,8 @@ private:
             delete[] tab;
             tab = new_data;
         }
-
     }
+
 
     void check_size(){
         if(last <= msize / 2){
@@ -47,9 +49,7 @@ private:
     }
 
 
-
 public:
-
     ArrayList(){
         msize = 2;
         last = 0;
@@ -87,7 +87,6 @@ public:
         return msize;
     }
 
-    // zwracany ostatni element - nie usuwany
     T& back(){
         if (empty()) {
             throw out_of_range("List is empty.");
@@ -95,7 +94,6 @@ public:
 
         return tab[last - 1];
     }
-    // zwracany 1 element - nie usuwany
 
     T& front(){
         if (empty()) {
@@ -136,6 +134,7 @@ public:
         return last == 0;
     }
     bool full() const { return last == msize; } // checks if the container is full
+
     int size(){
         return last;
     }
@@ -149,7 +148,6 @@ public:
         return tab[index];
     }
 
-    // dodawanie elementu na koniec
     void push_back(const T& value){
         if (last == msize){
             resizeUp();
@@ -158,7 +156,7 @@ public:
         last++;
     }
 
-    // dodawanie elemntu una poczatek
+
     void push_front(const T& value) {
         if (last == msize) {
             resizeUp();
@@ -170,8 +168,6 @@ public:
         last++;
     }
 
-
-    // pozornie usuwamy ostatni element
     void removeLast(){
         if (empty()){
             throw out_of_range("empty list");
@@ -181,7 +177,6 @@ public:
 
     }
 
-    // usiwanie elemntu o podanym indexie
     void erase(size_t index) {
         if (index >= last) {
             throw out_of_range("Index out of range");
