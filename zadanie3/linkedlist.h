@@ -11,7 +11,7 @@ struct SingleNode {
     SingleNode *next;
     SingleNode() : value(T()), next(nullptr) {} // konstruktor domyslny
     SingleNode(const T& item, SingleNode *ptr=nullptr) : value(item), next(ptr) {}
-    ~SingleNode() {} // destruktor
+    ~SingleNode() {}
 };
 
 template <typename T>
@@ -22,18 +22,18 @@ public:
     ~SingleList();
 
     SingleList(const SingleList& other){
-        if (this == &other) return; // self-assignment check
+        if (this == &other) return;
 
         SingleNode<T> *current = other.head;
         while (current != nullptr) {
             push_back(current->value);
             current = current->next;
         }
-    }; // copy constructor
+    };
 
     SingleList& operator=(const SingleList& other){
-        if (this == &other) {  // Sprawdzamy, czy przypisujemy do samego siebie
-            return *this;  // Jeśli tak, zwracamy *this
+        if (this == &other) {
+            return *this;
         }
         clear();
 
@@ -43,8 +43,7 @@ public:
             current=current->next;
         }
         return  *this;
-    }; // copy assignment operator, return *this
-    // usage:   list2 = list1;
+    };
 
     bool empty() const { return head == nullptr; }
     std::size_t size() const{
@@ -80,7 +79,7 @@ public:
 
     } // czyszczenie listy z elementow O(n)
 
-    void reverse(){
+    void reverse() {
         if (head == nullptr || head->next == nullptr) {
             return;
         }
@@ -89,14 +88,18 @@ public:
         SingleNode<T> *current = head;
         SingleNode<T> *next_node = nullptr;
 
-        while (current != nullptr){
+        tail = head;  
+
+        while (current != nullptr) {
             next_node = current->next;
             current->next = prev;
             prev = current;
             current = next_node;
         }
-        head = prev;
-    }// O(n)
+
+        head = prev;  
+    }
+
 
     void pop_front(); // usuwa poczatek O(1)
     void pop_back(); // usuwa koniec O(n)
