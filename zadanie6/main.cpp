@@ -7,7 +7,7 @@ void test_default_constructor() {
     assert(deque.size() == 0);
     assert(deque.empty());
     assert(!deque.full());
-    std::cout << "test_default_constructor passed\n";
+    std::cout << "test_default_constructor passed \n";
 }
 
 void test_push_back_and_push_front() {
