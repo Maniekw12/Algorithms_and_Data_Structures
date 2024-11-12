@@ -49,6 +49,19 @@ void test_clear() {
     std::cout << "test_clear passed\n";
 }
 
+void test_pop_lat_element() {
+    std::cout << "testPOPlast\n";
+    MyDeque<int> deque(5);
+    deque.push_back(10);      // Add 10 to the back of the deque
+    deque.pop_back();        // Remove the last element (10)
+    deque.display();         // Should print nothing (deque is empty)
+    deque.clear();           // Clear the deque (already empty)
+    deque.display();         // Should still print nothing (deque is empty)
+    assert(deque.size() == 0);  // Assert that size is 0
+    assert(deque.empty());      // Assert that the deque is empty
+}
+
+
 void test_copy_constructor() {
     MyDeque<int> deque1(5);
     deque1.push_back(10);

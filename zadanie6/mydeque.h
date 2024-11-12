@@ -78,6 +78,7 @@ void MyDeque<T>::push_back(const T& item) {
     tab[tail] = item;
     tail = (tail + 1) % msize;
 }
+
 template <typename T>
 void MyDeque<T>::display() {
     for (std::size_t i = head; i != tail; i=(i+1) % msize) {
@@ -87,20 +88,27 @@ void MyDeque<T>::display() {
     std::cout << std::endl;
 }
 
+
 template <typename T>
 void MyDeque<T>::pop_back() {
-    if (empty()){
-        return;
-    }
+    assert(!empty());
     tail = (tail -1 + msize) % msize;
+
+    if (head == tail) {
+        head = tail = 0;
+    }
+
 }
 
 template <typename T>
 void MyDeque<T>::pop_front() {
-    if (empty()){
-        return;
-    }
+    assert(!empty());
+
     head = (head +1) %msize;
+
+    if (head == tail) {
+        head = tail = 0;
+    }
 }
 
 template <typename T>
