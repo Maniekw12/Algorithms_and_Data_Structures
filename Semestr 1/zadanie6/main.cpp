@@ -1,6 +1,6 @@
 #include <cassert>
 #include <iostream>
-#include "MyDeque.h"
+#include "mydeque.h"
 
 void test_default_constructor() {
     MyDeque<int> deque;
