@@ -1,64 +1,56 @@
-#include "GraphList.h"
-#include "iostream"
-#include "cassert"
+#include <iostream>
+#include <cassert>
+#include "GraphList.h"  // jeśli masz klasę w osobnym pliku, inaczej wklej kod przed main
+
 int main() {
     Graph g;
 
     // Dodawanie wierzchołków
-    g.addVertex(10); // id = 0
-    g.addVertex(20); // id = 1
-    g.addVertex(30); // id = 2
+    g.addVertex(1);
+    g.addVertex(2);
+    g.addVertex(3);
 
-    Node* n0 = g.getVertexById(0);
-    Node* n1 = g.getVertexById(1);
-    Node* n2 = g.getVertexById(2);
-
-    assert(n0 != nullptr);
-    assert(n1 != nullptr);
-    assert(n2 != nullptr);
-    assert(n0->value == 10);
-    assert(n1->value == 20);
-    assert(n2->value == 30);
-
-    // Zmiana wartości wierzchołka
-    g.setVertexValue(n0, 99);
-    assert(n0->value == 99);
+    assert(g.size() == 3);
 
     // Dodawanie krawędzi
-    g.addEdge(n0, n1, 5);
-    assert(g.areNeighbours(n0, n1));
-    assert(g.areNeighbours(n1, n0));
-    assert(g.getEdgeValue(n0, n1) == 5);
-    assert(g.getEdgeValue(n1, n0) == 5);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
 
-    // Zmiana wartości krawędzi
-    g.setEdgeValue(n0, n1, 7);
-    assert(g.getEdgeValue(n0, n1) == 7);
+    assert(g.adjacent(1, 2));
+    assert(g.adjacent(1, 3));
+    assert(!g.adjacent(2, 1));
 
-    // Dodawanie drugiej krawędzi
-    g.addEdge(n1, n2, 3);
-    assert(g.areNeighbours(n1, n2));
-    assert(g.getEdgeValue(n1, n2) == 3);
+    // Sąsiedzi
+    std::list<int> neighbours = g.getNeighbours(1);
+    assert(neighbours.size() == 2);
+    assert(std::find(neighbours.begin(), neighbours.end(), 2) != neighbours.end());
+    assert(std::find(neighbours.begin(), neighbours.end(), 3) != neighbours.end());
+
+    // Wartości wierzchołków
+    g.setVertexValue(1, 42);
+    assert(g.getVertexValue(1) == 42);
+
+    g.setVertexValue(2, 7);
+    assert(g.getVertexValue(2) == 7);
+
+    assert(g.getVertexValue(999) == -1); // nieistniejący wierzchołek
+
+    // Wartości krawędzi
+    g.setEdgeValue(1, 2, 99);
+    assert(g.getEdgeValue(1, 2) == 99);
+    assert(g.getEdgeValue(1, 3) == 0); // domyślnie 0
+    assert(g.getEdgeValue(2, 1) == -1); // brak krawędzi
 
     // Usuwanie krawędzi
-    g.removeEdge(n0, n1);
-    assert(!g.areNeighbours(n0, n1));
-    assert(g.getEdgeValue(n0, n1) == 0);
+    g.removeEdge(1, 2);
+    assert(!g.adjacent(1, 2));
+    assert(g.adjacent(1, 3));
 
-    // Usuwanie wierzchołka (sprawdzenie czy usuwa krawędź też)
-    g.removeVertex(n1);
-    assert(g.getVertexById(1) == nullptr);
-    assert(!g.areNeighbours(n2, n1));
+    // Usuwanie wierzchołka
+    g.removeVertex(3);
+    assert(!g.adjacent(1, 3));
+    assert(g.size() == 2);
 
-    // Dodanie nowego wierzchołka i krawędzi do testu sąsiadów
-    g.addVertex(40); // id = 3
-    Node* n3 = g.getVertexById(3);
-    g.addEdge(n2, n3, 6);
-    std::list<Node*> neighbours = g.getNeighbours(n2);
-    assert(neighbours.size() == 1);
-    assert(neighbours.front() == n3);
-
-    std::cout << "all tests passed successfully! :)\n";
+    std::cout << "All tests passed successfully!\n";
     return 0;
 }
-

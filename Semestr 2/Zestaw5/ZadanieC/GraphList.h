@@ -1,138 +1,105 @@
-#include <iostream>
 #include <vector>
-#include <unordered_map>
+#include <algorithm>
 #include <list>
-#include <utility>
-
-class Node{
-public:
-  int id;
-  int value;
-  std::list<Node*> neighbours;
-
-    Node(int id, int value) : id(id), value(value) {}
-};
-
-class Edge{
-public:
-    Node* vertex1;
-    Node* vertex2;
-    int value;
-
-    Edge(Node* vertex1, Node* vertex2, int value)
-            : vertex1(vertex1), vertex2(vertex2), value(value) {}
-};
-
+#include <map>
 
 class Graph{
 private:
-    int numVertices;
-    std::vector<Node*> vertices;
-    std::vector<Edge*> edges;
-    int actualID = 0;
+    struct Edge {
+        int weight = 0;
+        int endNode = -1;
+    };
+
+    struct Node {
+        int weight = 0;
+        std::list<Edge> edges;
+    };
+
+    std::map<int, Node> graph; // graf jest przechowywany w mapie id -> NOde, kazdy node zawiera liste wierzcholkow
+
 public:
-    Graph(){
+    void addVertex(int id) {
+        Node node;
+        graph[id] = node;
     }
 
-    void addVertex(int value){
-        Node* newNode = new Node(actualID, value);
-        actualID++;
-        vertices.push_back(newNode);
-    }
 
-    void setVertexValue(Node *node,int value){
-        node->value = value;
-    }
+    void removeVertex(int id) {
+        graph.erase(id);
 
-    void setEdgeValue(Node* vertex1, Node* vertex2, int value) {
-        for (Edge* edge : edges) {
-            if ((edge->vertex1 == vertex1 && edge->vertex2 == vertex2) ||
-                (edge->vertex1 == vertex2 && edge->vertex2 == vertex1)) {
-                edge->value = value;
-                return;
+        for (auto& [key, node] : graph) {
+            for (auto it = node.edges.begin(); it != node.edges.end(); ) {
+                if (it->endNode == id)
+                    it = node.edges.erase(it);
+                else
+                    ++it;
             }
         }
-        return;
     }
 
-    void addEdge(Node* vertex1, Node* vertex2, int value) {
-        vertex1->neighbours.push_back(vertex2);
-        vertex2->neighbours.push_back(vertex1);
-        Edge* newEdge = new Edge(vertex1, vertex2, value);
-        edges.push_back(newEdge);
-    }
-
-    void removeEdge(Node* vertex1, Node* vertex2) {
-        vertex1->neighbours.remove(vertex2);
-        vertex2->neighbours.remove(vertex1);
-
-        std::vector<Edge*> remainingEdges;
-        for (Edge* edge : edges) {
-            if ((edge->vertex1 == vertex1 && edge->vertex2 == vertex2) ||
-                (edge->vertex1 == vertex2 && edge->vertex2 == vertex1)) {
-                delete edge;
-            } else {
-                remainingEdges.push_back(edge);
-            }
-        }
-        edges = remainingEdges;
-    }
-
-    std::list<Node*> getNeighbours(Node* node){
-        return node->neighbours;
-    }
-
-    bool areNeighbours(Node* vertex1, Node* vertex2) {
-        for (Node *neighbour: vertex1->neighbours) {
-            if (neighbour == vertex2) {
+    bool adjacent (int from, int to){
+        for (const Edge& edge : graph.at(from).edges) {
+            if (edge.endNode == to)
                 return true;
-            }
         }
         return false;
     }
 
-    int getEdgeValue(Node* vertex1, Node* vertex2) {
-        for (Edge *edge: edges) {
-            if ((edge->vertex1 == vertex1 && edge->vertex2 == vertex2) ||
-                (edge->vertex1 == vertex2 && edge->vertex2 == vertex1)) {
-                return edge->value;
-            }
+    std::list<int> getNeighbours(int id) {
+        std::list<int> neighbours;
+        for (const Edge& edge : graph.at(id).edges) {
+            neighbours.push_back(edge.endNode);
         }
-        return 0;
+        return neighbours;
     }
 
-    void removeVertex(Node* node){
-        for(Node* v : vertices){
-            v->neighbours.remove(node);
+    void addEdge(int from, int to) {
+        if (graph.count(from) && graph.count(to)) {
+            Edge edge;
+            edge.endNode = to;
+            graph[from].edges.push_back(edge);
         }
-
-        std::vector<Edge*> remainingEdges;
-        for(Edge* edge : edges){
-            if (edge->vertex1 == node || edge->vertex2 == node) {
-                delete edge;
-            } else {
-                remainingEdges.push_back(edge);
-            }
-        }
-        std::vector<Node*> remainingVertices;
-        for (Node* v : vertices) {
-            if (v != node) {
-                remainingVertices.push_back(v);
-            }
-        }
-        vertices = remainingVertices;
-
-        delete node;
     }
 
-    Node* getVertexById(int id) {
-        for (Node* v : vertices) {
-            if (v->id == id) return v;
+    void removeEdge(int from, int to) {
+        auto& edges = graph.at(from).edges;
+        for (auto it = edges.begin(); it != edges.end(); ++it) {
+            if (it->endNode == to) {
+                edges.erase(it);
+                return;
+            }
         }
-        return nullptr;
     }
 
+    void setVertexValue(int id, int value) {
+        graph.at(id).weight = value;
+    }
 
+    int getVertexValue(int id) {
+        if (!graph.count(id))
+            return -1;
+        return graph.at(id).weight;
+    }
+
+    void setEdgeValue(int from, int to, int value) {
+        for (Edge& edge : graph.at(from).edges) {
+            if (edge.endNode == to) {
+                edge.weight = value;
+                break;
+            }
+        }
+    }
+
+    int getEdgeValue(int from, int to) {
+        for (const Edge& edge : graph.at(from).edges) {
+            if (edge.endNode == to)
+                return edge.weight;
+        }
+        return -1;
+    }
+
+    int size() const {
+        return graph.size();
+    }
 };
-
 
